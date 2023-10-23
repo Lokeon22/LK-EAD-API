@@ -9,5 +9,6 @@ const userController = new UserController();
 userRoutes.post("/users/register", userController.create);
 userRoutes.get("/users", userController.show);
 userRoutes.get("/myaccount/details", ensureAuth, userController.index);
+userRoutes.put("/myaccount/update", ensureAuth, userController.update_subinfos);
 
 export { userRoutes };

@@ -2,6 +2,13 @@ import { UserCreateRepository, UserCreate } from "../repositories/UserCreateRepo
 import { hash } from "bcrypt";
 import { AppError } from "../utils/AppError";
 
+import { UserAllInfos } from "../controllers/UsersController";
+
+export interface UserUpdate {
+  id: number;
+  data: UserAllInfos;
+}
+
 class UserCreateServices {
   userCreateRepository;
 
@@ -18,17 +25,19 @@ class UserCreateServices {
 
     const hashPassword = await hash(password, 8);
 
-    const { id } = await this.userCreateRepository.create({ name, email, password: hashPassword });
-
-    return { user_created: id };
-  }
-
-  async execute_alldetails({ id }: { id: number }) {
-    const { user, user_contact, user_private } = await this.userCreateRepository.all_details({
-      id,
+    const user_created = await this.userCreateRepository.create({
+      name,
+      email,
+      password: hashPassword,
     });
 
-    return { user, user_contact, user_private };
+    return user_created;
+  }
+
+  async execute_update({ id, data }: UserUpdate) {
+    const { user_id } = await this.userCreateRepository.update({ id, data });
+
+    return user_id;
   }
 }
 

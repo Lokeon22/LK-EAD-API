@@ -4,11 +4,7 @@ const tableName = "user_contactinfo";
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(tableName, (table) => {
-    table
-      .integer("contact_id")
-      .references("user_id")
-      .inTable("user_privateinfo")
-      .onDelete("CASCADE");
+    table.integer("contact_id").references("id").inTable("users").onDelete("CASCADE");
     table.text("phone");
     table.text("cep");
     table.text("state");
