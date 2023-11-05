@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { UserCreateRepository, UserCreate } from "../repositories/UserCreateRepository";
+import {
+  UserCreateRepository,
+  UserCreate,
+} from "../repositories/UserCreateRepository";
 import { UserCreateServices } from "../services/UserCreateServices";
 
 import { UserPrivateInfo, UserContactInfo } from "../@types/UserType";
@@ -36,7 +39,9 @@ class UserController {
     const userCreateRepository = new UserCreateRepository();
     const userCreateServices = new UserCreateServices(userCreateRepository);
 
-    return res.json();
+    const user = await userCreateServices.execute_details({ id: user_id });
+
+    return res.json(user);
   }
 
   async show(req: Request, res: Response) {

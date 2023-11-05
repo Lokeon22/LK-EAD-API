@@ -3,6 +3,7 @@ import { UserProps } from "../@types/UserType";
 
 import { UserUpdate } from "../services/UserCreateServices";
 import { UserPrivateInfo, UserContactInfo } from "../@types/UserType";
+import { UserAllInfos } from "../controllers/UsersController";
 
 type UserCreate = Pick<UserProps, "name" | "email" | "password">;
 
@@ -52,8 +53,8 @@ class UserCreateRepository {
       .where({ contact_id: id })
       .first();
 
-    //first update_infos from user
-    const updated_info = await knex("user_privateinfo")
+    //first update_privateinfos from user
+    await knex("user_privateinfo")
       .where({ user_id: id })
       .update({
         CPF: data.cpf ?? private_info.cpf,
@@ -70,7 +71,7 @@ class UserCreateRepository {
       });
 
     //second update_contact from user
-    const update_contact = await knex("user_contactinfo")
+    await knex("user_contactinfo")
       .where({ contact_id: id })
       .update({
         phone: data.phone ?? contact_info.phone,
@@ -81,12 +82,25 @@ class UserCreateRepository {
         city: data.city ?? contact_info.city,
         neighborhood: data.neighborhood ?? contact_info.neighborhood,
         education: data.education ?? contact_info.education,
-        institution_name: data.institution_name ?? contact_info.institution_name,
-        institution_type: data.institution_type ?? contact_info.institution_type,
+        institution_name:
+          data.institution_name ?? contact_info.institution_name,
+        institution_type:
+          data.institution_type ?? contact_info.institution_type,
         year_graduation: data.year_graduation ?? contact_info.year_graduation,
       });
 
     return { user_id: id };
+  }
+
+  async details({ id }: { id: number }) {
+    const user_details: UserAllInfos = await knex("users")
+      .join("user_privateinfo", "users.id", "user_privateinfo.user_id")
+      .join("user_contactinfo", "users.id", "user_contactinfo.contact_id")
+      .select()
+      .where({ id })
+      .first();
+
+    return user_details;
   }
 }
 

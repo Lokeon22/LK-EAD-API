@@ -1,4 +1,7 @@
-import { UserCreateRepository, UserCreate } from "../repositories/UserCreateRepository";
+import {
+  UserCreateRepository,
+  UserCreate,
+} from "../repositories/UserCreateRepository";
 import { hash } from "bcrypt";
 import { AppError } from "../utils/AppError";
 
@@ -17,9 +20,12 @@ class UserCreateServices {
   }
 
   async execute({ name, email, password }: UserCreate) {
-    if (!name || !email || !password) throw new AppError("Preencha todos os campos");
+    if (!name || !email || !password)
+      throw new AppError("Preencha todos os campos");
 
-    const verifyEmail = await this.userCreateRepository.verifyEmailExists({ email });
+    const verifyEmail = await this.userCreateRepository.verifyEmailExists({
+      email,
+    });
 
     if (verifyEmail) throw new AppError("Esse email já está em uso");
 
@@ -38,6 +44,12 @@ class UserCreateServices {
     const { user_id } = await this.userCreateRepository.update({ id, data });
 
     return user_id;
+  }
+
+  async execute_details({ id }: { id: number }) {
+    const user = await this.userCreateRepository.details({ id });
+
+    return user;
   }
 }
 
