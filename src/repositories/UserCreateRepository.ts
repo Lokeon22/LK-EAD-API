@@ -1,11 +1,14 @@
 import { connection as knex } from "../database/knex";
-import { UserProps } from "../@types/UserType";
+import {
+  UserProps,
+  UserPrivateInfo,
+  UserContactInfo,
+} from "../@types/UserType";
 
 import { UserUpdate } from "../services/UserCreateServices";
-import { UserPrivateInfo, UserContactInfo } from "../@types/UserType";
-import { UserAllInfos } from "../controllers/UsersController";
 
 type UserCreate = Pick<UserProps, "name" | "email" | "password">;
+type UserDetailsProps = UserProps & UserPrivateInfo & UserContactInfo;
 
 class UserCreateRepository {
   async verifyEmailExists({ email }: { email: string }) {
@@ -93,7 +96,7 @@ class UserCreateRepository {
   }
 
   async details({ id }: { id: number }) {
-    const user_details: UserAllInfos = await knex("users")
+    const user_details: UserDetailsProps = await knex("users")
       .join("user_privateinfo", "users.id", "user_privateinfo.user_id")
       .join("user_contactinfo", "users.id", "user_contactinfo.contact_id")
       .select()
